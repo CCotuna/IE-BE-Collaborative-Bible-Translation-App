@@ -1,0 +1,26 @@
+services:
+  app:
+    build: .docker
+    stdin_open: true
+    tty: true
+    container_name: app.Backend-Collaborative-Bible-Translation-App
+    environment:
+      NODE_ENV: development
+      CHOKIDAR_USEPOLLING: true
+      CHOKIDAR_INTERVAL: 100
+    ports:
+      - "3000:3000"
+      - "8080:8080"
+    expose:
+      - "3000"
+      - "8080"
+    volumes:
+      - .:/app
+      # exclude
+      - /app/.git/
+    working_dir: /app
+    user: 1000:1000
+
+volumes:
+  mysql_data:
+    driver: local
