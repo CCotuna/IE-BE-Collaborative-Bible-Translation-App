@@ -3,24 +3,46 @@ services:
     build: .docker
     stdin_open: true
     tty: true
-    container_name: app.Backend-Collaborative-Bible-Translation-App
+    container_name: app.BackendApp
     environment:
       NODE_ENV: development
       CHOKIDAR_USEPOLLING: true
       CHOKIDAR_INTERVAL: 100
     ports:
       - "3000:3000"
-      - "8080:8080"
     expose:
       - "3000"
-      - "8080"
     volumes:
       - .:/app
-      # exclude
-      - /app/.git/
+      - /app/.git/ # exclude .git
     working_dir: /app
     user: 1000:1000
 
+  mysql:
+    image: mysql/mysql-server:8.0
+    platform: linux/arm64
+    container_name: mysql.BackendApp
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: BackendApp
+      MYSQL_USER: BackendApp
+      MYSQL_PASSWORD: BackendApp
+    volumes:
+      - mysql_project:/var/lib/mysql
+
+  phpmyadmin:
+    image: arm64v8/phpmyadmin:latest
+    container_name: pma.BackendApp
+    ports:
+      - "4577:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: BackendApp
+      PMA_PASSWORD: BackendApp
+      UPLOAD_LIMIT: 250M
+
 volumes:
-  mysql_data:
+  mysql_project:
     driver: local
