@@ -3,7 +3,7 @@ import { Project } from "../models/project.model.js";
 // Fetch all projects
 export async function getAllProjects() {
   return await Project.findAll({
-    attributes: ["id", "title", "text", "type", "has_updates"],
+    attributes: ["id", "title", "text", "type", "has_updates", "createdAt", "updatedAt", "deletedAt"],
   });
 }
 

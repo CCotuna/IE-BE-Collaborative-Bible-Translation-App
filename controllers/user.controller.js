@@ -3,14 +3,13 @@ import { createUser, getAllUsers } from "../services/user.service.js";
 // Add a new user
 export async function addUser(req, res) {
   try {
-    const { username, password, customId } = req.body;
+    const { username, password } = req.body;
 
-    // Validate request body
-    if (!username || !password || !customId) {
+    if (!username || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const user = await createUser(username, password, customId);
+    const user = await createUser(username, password);
     res.status(201).json(user);
   } catch (error) {
     console.error("Error adding user:", error);

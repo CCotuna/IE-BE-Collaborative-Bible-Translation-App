@@ -3,18 +3,18 @@ import { User } from "../models/user.model.js";
 // Fetch all users
 export async function getAllUsers() {
   return await User.findAll({
-    attributes: ["id", "username", "customId"], 
+    attributes: ["id", "username"], 
   });
 }
 
 // Create a new user
-export async function createUser(username, password, customId) {
+export async function createUser(username, password) {
   try {
-    const newUser = await User.create({ username, password, customId });
+    const newUser = await User.create({ username, password });
     return {
       id: newUser.id,
       username: newUser.username,
-      customId: newUser.customId,
+      password: newUser.password
     };
   } catch (error) {
     console.error("Error creating user:", error);
