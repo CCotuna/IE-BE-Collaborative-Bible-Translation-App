@@ -22,3 +22,12 @@ export async function createProject(title, text, type, has_updates) {
     throw error;
   }
 }
+
+export async function deleteOneProject(projectId) {
+  try {
+    await Project.destroy({ where: { id: projectId } });
+  } catch (error) {
+    console.error("Error deleting project:", error);
+    throw error;
+  }
+}

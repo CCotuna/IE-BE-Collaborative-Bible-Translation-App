@@ -1,4 +1,4 @@
-import { getAllProjects, createProject } from "../services/project.service.js";
+import { getAllProjects, createProject, deleteOneProject } from "../services/project.service.js";
 
 // Get all projects
 export async function getProjects(req, res) {
@@ -29,4 +29,14 @@ export async function addProject(req, res) {
     console.error("Error adding project:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
+}
+
+// Delete a project
+export async function deleteProject(req, res) {
+  const { projectId } = req.body;
+  if(!projectId)
+    throw new Error("Project ID is required");
+
+  await deleteOneProject(projectId);
+  res.send("Project deleted successfully");
 }
