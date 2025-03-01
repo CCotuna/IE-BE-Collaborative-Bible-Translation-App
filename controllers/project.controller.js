@@ -3,8 +3,15 @@ import { getAllProjects, createProject, deleteOneProject } from "../services/pro
 // Get all projects
 export async function getProjects(req, res) {
   try {
-    const projects = await getAllProjects();
+    const { userId } = req.query;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    const projects = await getAllProjects(userId)
     res.status(200).json(projects);
+
   } catch (error) {
     console.error("Error fetching projects:", projects);
     res.status(500).json({ message: "Internal Server Error" });
@@ -21,9 +28,9 @@ export async function getProjects(req, res) {
 // };
 
 export async function addProject(req, res) {
-  const { title, text, type, has_updates } = req.body;
+  const { title, text, type, has_updates, userId } = req.body;
   try {
-    const newProject = await createProject(title, text, type, has_updates);
+    const newProject = await createProject(title, text, type, has_updates, userId);
     res.status(201).json(newProject);
   } catch (error) {
     console.error("Error adding project:", error);

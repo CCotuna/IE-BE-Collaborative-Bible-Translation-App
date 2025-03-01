@@ -1,6 +1,8 @@
 import { sequelize } from "../db.js";
 import { DataTypes } from "sequelize";
 
+import { User } from "./user.model.js";
+
 export const Project = sequelize.define(
   "Project",
   {
@@ -25,6 +27,14 @@ export const Project = sequelize.define(
       type: DataTypes.BOOLEAN,
       allowNull: false,
     },
+    userId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: User,
+        key: 'id',  
+      },
+      allowNull: true,
+    },
   },
   {
     freezeTableName: true,
@@ -32,3 +42,6 @@ export const Project = sequelize.define(
     timestamps: true,
   }
 );
+
+Project.belongsTo(User, { foreignKey: "userId" });
+User.hasMany(Project, { foreignKey: "userId" });
