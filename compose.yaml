@@ -38,7 +38,7 @@ services:
     ports:
       - "4577:80"
     environment:
-      PMA_HOST: mysql
+      PMA_HOST: mysql.BackendApp
       PMA_USER: BackendApp
       PMA_PASSWORD: BackendApp
       UPLOAD_LIMIT: 250M

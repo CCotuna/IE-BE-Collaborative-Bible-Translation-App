@@ -9,14 +9,11 @@ import { Comment } from "./models/comment.model.js";
 import { BibleBook } from "./models/bible.book.model.js";
 import { BibleChapter } from "./models/bible.chapter.model.js";
 
-User.belongsToMany(Project, { through: "UserProjects", foreignKey: "userId" });
-Project.belongsToMany(User, { through: "UserProjects", foreignKey: "projectId" });
+// User.hasMany(UserAccess, { foreignKey: "userId", onDelete: "CASCADE"});
+// UserAccess.belongsTo(User, { foreignKey: "userId"})
 
-User.hasMany(UserAccess, { foreignKey: "userId", onDelete: "CASCADE"});
-UserAccess.belongsTo(User, { foreignKey: "userId"})
-
-Project.hasMany(UserAccess, { foreignKey: "projectId", onDelete: "CASCADE"});
-UserAccess.belongsTo(Project, { foreignKey: "projectId"})
+// Project.hasMany(UserAccess, { foreignKey: "projectId", onDelete: "CASCADE"});
+// UserAccess.belongsTo(Project, { foreignKey: "projectId"})
 
 sequelize.sync({ alter: true }).then(() => {
   console.log("FINISHED SUCCESS");

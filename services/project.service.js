@@ -3,6 +3,22 @@ import { Project } from "../models/project.model.js";
 // Fetch all projects
 export async function getAllProjects() {
   return await Project.findAll({
-    attributes: ["id"],
+    attributes: ["id", "title", "text", "type", "has_updates"],
   });
+}
+
+// Create a new project
+export async function createProject(title, text, type, has_updates) {
+  try {
+    const newProject = await Project.create({ title, text, type, has_updates });
+    return {
+      title: newProject.title,
+      text: newProject.text,
+      type: newProject.type,
+      has_updates: newProject.has_updates
+    };
+  } catch (error) {
+    console.error("Error creating project:", error);
+    throw error;
+  }
 }

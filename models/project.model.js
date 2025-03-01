@@ -9,18 +9,26 @@ export const Project = sequelize.define(
       autoIncrement: true,
       primaryKey: true,
     },
-    name: {
+    title: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
-    description: {
+    text: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    type: {
       type: DataTypes.STRING,
+      allowNull: true,
     },
-    creationDate: {
-      type: DataTypes.DATE,
+    has_updates: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
     },
   },
   {
     freezeTableName: true,
-    timestamps: false,
+    paranoid: true,
+    timestamps: true,
   }
 );
