@@ -21,3 +21,15 @@ export async function createUser(username, password) {
     throw error;
   }
 }
+
+// Sign in a user
+export async function signInUser(username, password) {
+  try {
+    const user = await User.findOne({ where: { username, password } });
+    return user;
+  }
+  catch (error) {
+    console.error("Error signing in:", error);
+    throw error;
+  }
+}
