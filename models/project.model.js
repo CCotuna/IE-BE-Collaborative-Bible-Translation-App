@@ -1,6 +1,5 @@
 import { sequelize } from "../db.js";
 import { DataTypes } from "sequelize";
-
 import { User } from "./user.model.js";
 
 export const Project = sequelize.define(
@@ -23,7 +22,7 @@ export const Project = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    has_updates: {
+    hasUpdates: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
     },
@@ -31,8 +30,12 @@ export const Project = sequelize.define(
       type: DataTypes.INTEGER,
       references: {
         model: User,
-        key: 'id',  
+        key: 'id',
       },
+      allowNull: true,
+    },
+    version: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
   },

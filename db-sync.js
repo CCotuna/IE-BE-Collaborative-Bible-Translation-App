@@ -15,7 +15,7 @@ import { BibleChapter } from "./models/bible.chapter.model.js";
 // Project.hasMany(UserAccess, { foreignKey: "projectId", onDelete: "CASCADE"});
 // UserAccess.belongsTo(Project, { foreignKey: "projectId"})
 
-sequelize.sync({ alter: true }).then(() => {
+sequelize.sync({ force: true }).then(() => {
   console.log("FINISHED SUCCESS");
   process.exit(0);
 });
