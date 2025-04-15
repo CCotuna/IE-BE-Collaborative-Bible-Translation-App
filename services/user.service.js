@@ -1,20 +1,20 @@
 import { User } from "../models/user.model.js";
+import bcrypt from "bcrypt";
 
 // Fetch all users
 export async function getAllUsers() {
   return await User.findAll({
-    attributes: ["id", "username"], 
+    attributes: ["id", "email"], 
   });
 }
 
 // Create a new user
-export async function createUser(username, password) {
+export async function createUser(email, password) {
   try {
-    const newUser = await User.create({ username, password });
+    const newUser = await User.create({ email, password });
     return {
       id: newUser.id,
-      username: newUser.username,
-      password: newUser.password
+      email: newUser.email,
     };
   } catch (error) {
     console.error("Error creating user:", error);
@@ -23,10 +23,18 @@ export async function createUser(username, password) {
 }
 
 // Sign in a user
-export async function signInUser(username, password) {
+export async function signInUser(email, password) {
   try {
-    const user = await User.findOne({ where: { username, password } });
-    return user;
+    const user = await User.findOne({ where: { email } });
+    if (!user) return null;
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) return null;
+    
+    return {
+      id: user.id,
+      email: user.email
+    };
   }
   catch (error) {
     console.error("Error signing in:", error);

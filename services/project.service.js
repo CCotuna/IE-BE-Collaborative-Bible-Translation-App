@@ -1,27 +1,62 @@
 import { Project } from "../models/project.model.js";
-import { BibleBook } from "../models/bible.book.model.js";
-import { BibleChapter } from "../models/bible.chapter.model.js";
 import { Fragment } from "../models/fragment.model.js";
 
 import axios from "axios";
 
 // Fetch all projects
-export async function getAllProjects(userId = null) {
-  const where = userId ? { userId} : {}
+export async function getAllProjects(userId) {
+  const where = userId ? { userId: parseInt(userId, 10) } : {};
 
-  return await Project.findAll({
-    where,
-    attributes: ["id", "title", "text", "type", "hasUpdates", "userId", "createdAt", "updatedAt", "deletedAt"],
-  });
+  try {
+    return await Project.findAll({
+      where,
+      attributes: ["id", "title", "type", "hasUpdates", "userId", "createdAt", "updatedAt", "deletedAt"],
+      include: [{
+        model: Fragment,
+        as: 'fragments',
+        attributes: ['id', 'content', 'verseNumber']
+      }],
+    });
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    throw error;
+  }
 }
 
 // Create a new project
 export async function createProject(title, text, type, hasUpdates, userId) {
+  const transaction = await Project.sequelize.transaction();
+
   try {
-    const newProject = await Project.create({ title, text, type, hasUpdates, userId });
+    const newProject = await Project.create({
+      title,
+      type,
+      hasUpdates,
+      userId
+    }, { transaction });
+
+    // Împarte textul pe ENTER în fragmente
+    const lines = text
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => line !== '');
+
+    // Creează fragmentele
+    const fragmentPromises = lines.map((line, index) => {
+      return Fragment.create({
+        content: line,
+        verseNumber: index + 1,
+        projectId: newProject.id
+      }, { transaction });
+    });
+
+    await Promise.all(fragmentPromises);
+    await transaction.commit();
+
     return newProject;
   } catch (error) {
-    console.error("Error creating project:", error);
+    await transaction.rollback();
+    console.error("Error creating project with fragments:", error);
     throw error;
   }
 }
@@ -35,39 +70,3 @@ export async function deleteOneProject(projectId) {
   }
 }
 
-export const getAllBibleBooks = async (version) => {
-  try {
-    const response = await axios.get(`https://bible-api.com/books?translation=${version}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching Bible books:", error);
-    throw new Error("Failed to fetch Bible books");
-  }
-};
-
-export const getChapters = async (book, version) => {
-  try {
-    const response = await axios.get(`https://bible-api.com/${book}?translation=${version}`);
-    return response.data;
-  } catch (error) {
-    console.error(`Error fetching chapters for ${book}:`, error);
-    throw new Error(`Failed to fetch chapters for ${book}`);
-  }
-};
-
-export const importBible = async (projectId, version) => {
-  const books = await getAllBibleBooks(version);
-
-  for (let book of books) {
-    const bibleBook = await BibleBook.create({ title: book.name, projectId });
-
-    const chapters = await getChapters(book.name, version);
-    for (let chapter of chapters) {
-      const bibleChapter = await BibleChapter.create({ title: chapter.number, bibleBookId: bibleBook.id });
-
-      for (let fragment of chapter.verses) {
-        await Fragment.create({ text: fragment.text, bibleChapterId: bibleChapter.id, projectId });
-      }
-    }
-  }
-};

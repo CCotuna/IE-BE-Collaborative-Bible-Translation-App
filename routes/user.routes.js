@@ -7,11 +7,8 @@ import {
 
 const router = Router();
 
-// Route to add a user
-router.post("/", addUser);
-
-// Route to get all users
 router.get("/", getUsers);
+router.post("/", addUser);
 router.post("/signin", signIn);
 
 export default router;

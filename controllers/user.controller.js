@@ -1,15 +1,19 @@
 import { createUser, getAllUsers, signInUser } from "../services/user.service.js";
+import bcrypt from "bcrypt"
 
 // Add a new user
 export async function addUser(req, res) {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    if (!username || !password) {
+    if (!email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const user = await createUser(username, password);
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const user = await createUser(email, hashedPassword);
     res.status(201).json(user);
   } catch (error) {
     console.error("Error adding user:", error);
@@ -31,14 +35,13 @@ export async function getUsers(req, res) {
 // Sign in a user
 export async function signIn(req, res) {
   try {
-    const { username, password } = req.body;
-    console.log("signIn -> username", username)
+    const { email, password } = req.body;
 
-    if (!username || !password) {
+    if (!email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const user = await signInUser(username, password);
+    const user = await signInUser(email, password);
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
