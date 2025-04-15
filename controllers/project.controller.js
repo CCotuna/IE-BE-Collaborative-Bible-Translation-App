@@ -37,3 +37,7 @@ export async function deleteProject(req, res) {
   await deleteOneProject(projectId);
   res.send("Project deleted successfully");
 }
+
+export async function addComment(req, res) {
+  console.log("Hehe")
+}

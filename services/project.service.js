@@ -1,5 +1,6 @@
 import { Project } from "../models/project.model.js";
 import { Fragment } from "../models/fragment.model.js";
+import { Comment } from "../models/comment.model.js";
 
 import axios from "axios";
 
@@ -10,11 +11,18 @@ export async function getAllProjects(userId) {
   try {
     return await Project.findAll({
       where,
-      attributes: ["id", "title", "type", "hasUpdates", "userId", "createdAt", "updatedAt", "deletedAt"],
+      attributes: ["id", "title", "type", "hasUpdates", "userId", "createdAt", "updatedAt"],
       include: [{
         model: Fragment,
         as: 'fragments',
-        attributes: ['id', 'content', 'verseNumber']
+        attributes: ['id', 'content', 'verseNumber'],
+        include: [
+          {
+            model: Comment,
+            as: 'comments',
+            attributes: ['id', 'content', 'userId', 'userEmail']
+          }
+        ]
       }],
     });
   } catch (error) {
@@ -63,9 +71,10 @@ export async function createProject(title, text, type, hasUpdates, userId) {
 
 export async function deleteOneProject(projectId) {
   try {
+    await Fragment.destroy({ where: { projectId } })
     await Project.destroy({ where: { id: projectId } });
   } catch (error) {
-    console.error("Error deleting project:", error);
+    console.error("Error deleting project and its fragments:", error);
     throw error;
   }
 }

@@ -37,7 +37,6 @@ export const Project = sequelize.define(
   },
   {
     freezeTableName: true,
-    paranoid: true,
     timestamps: true,
   }
 );
