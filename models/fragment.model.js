@@ -11,7 +11,7 @@ export const Fragment = sequelize.define(
     },
     verseNumber: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
     projectId: {
       type: DataTypes.INTEGER,

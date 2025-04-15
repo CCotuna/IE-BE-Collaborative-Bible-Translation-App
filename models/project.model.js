@@ -1,6 +1,7 @@
 import { sequelize } from "../db.js";
 import { DataTypes } from "sequelize";
 import { User } from "./user.model.js";
+import { UserAccess } from "./user.access.model.js";
 
 export const Project = sequelize.define(
   "Project",
@@ -41,5 +42,16 @@ export const Project = sequelize.define(
   }
 );
 
-Project.belongsTo(User, { foreignKey: "userId" });
-User.hasMany(Project, { foreignKey: "userId" });
+User.belongsToMany(Project, {
+  through: UserAccess,
+  foreignKey: 'userId',
+  otherKey: 'projectId',
+  as: 'collaborators',
+});
+
+Project.belongsToMany(User, {
+  through: UserAccess,
+  foreignKey: 'projectId',
+  otherKey: 'userId',
+  as: 'collaborators'
+});
